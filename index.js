@@ -7,9 +7,7 @@ const app = express();
 
 // middlewares
 app.use(cors());
-app.use(express())
-
-console.log(process.env.DB_USER)
+app.use(express.json());
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.uvrlcrq.mongodb.net/?retryWrites=true&w=majority`;
@@ -27,6 +25,15 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    const toyData = client.db('toyDB').collection('toys')
+
+    app.use('/products', async (req, res) => {
+      const result = await toyData.find().toArray()
+      res.send(result)
+    })
+    
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
