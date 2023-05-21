@@ -64,6 +64,30 @@ async function run() {
       res.send(result)
     })
 
+    app.put('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updatedToy = req.body;
+      const toy = {
+        $set: {
+          img: updatedToy.img,
+          price: updatedToy.price,
+          category: updatedToy.category,
+          stock: updatedToy.stock,
+          name: updatedToy.name,
+          seler: updatedToy.seler,
+          rating: updatedToy.rating,
+          ratingCount: updatedToy.ratingCount,
+          shipping: updatedToy.shipping,
+          description: updatedToy.description
+        }
+      }
+      const result = await toyData.updateOne(filter, toy);
+      res.send(result)
+
+    })
+
+
     // get data by email
     app.get('/products', async (req, res) => {
 
