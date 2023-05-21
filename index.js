@@ -35,6 +35,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
 
     const toyData = client.db('toyDB').collection('toys')
+    const usersData = client.db('toyDB').collection('users')
 
 
     app.post('/jwtToken', (req, res) => {
@@ -87,6 +88,11 @@ async function run() {
         query = { email: req.query.email }
       }
       const result = await toyData.find(query).toArray()
+      res.send(result)
+    })
+
+    app.get('/users', async(req, res) => {
+      const result = await usersData.find().toArray()
       res.send(result)
     })
 
