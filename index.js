@@ -6,8 +6,14 @@ require('dotenv').config()
 const port = process.env.PORT || 5000;
 const app = express();
 
+const corsOptions ={
+  origin:'*', 
+  credentials:true,
+  optionSuccessStatus:200,
+}
+
 // middlewares
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 
@@ -23,30 +29,11 @@ const client = new MongoClient(uri, {
 });
 
 
-// const verifyJwt = (req, res, next) => {
-//   console.log('hitting verify jwt')
-//   console.log(req.headers.authorization)
-//   const authorization = req.headers.authorization;
-//   if (!authorization) {
-//     return res.status(401).send({ error: true, message: 'Unauthorized access' })
-//   }
-//   const token = authorization.split(' ')[1];
-//   console.log(token)
-//   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
-//     if (error) {
-//       return res.status(403).send({ error: true, message: 'Unauthorized access' })
-//     }
-//     else {
-//       req.decoded = decoded;
-//     }
-//   })
-//   next()
-// }
-
 
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
+
     const toyData = client.db('toyDB').collection('toys')
 
 
@@ -87,7 +74,6 @@ async function run() {
 
     })
 
-
     // get data by email
     app.get('/products', async (req, res) => {
 
@@ -104,28 +90,18 @@ async function run() {
       res.send(result)
     })
 
-    // get data by product name
-    // app.get('/products', async(req, res) => {
-    //   console.log(req.query)
-    //   let query = {};
-    //   if (req.query?.name) {
-    //     query = { name: req.query.name }
-    //   }
-    //   const result = await toyData.find(query).toArray()
-    //   res.send(result)
-    // })
 
     // get data for pagination
-    app.get('/products', async(req, res) => {
-      console.log(req.query)
+    // app.get('/products', async(req, res) => {
+    //   console.log(req.query)
       
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
-      const skip = (page -1) * limit;
-      console.log(limit, skip)
-      const result = await toyData.find().skip(skip).limit(limit).toArray();
-      res.send(result)
-    })
+    //   const page = parseInt(req.query.page) || 1;
+    //   const limit = parseInt(req.query.limit) || 10;
+    //   const skip = (page -1) * limit;
+    //   console.log(limit, skip)
+    //   const result = await toyData.find().skip(skip).limit(limit).toArray();
+    //   res.send(result)
+    // })
 
     // get data by product id
     app.get('/products/:id', async (req, res) => {
@@ -135,7 +111,6 @@ async function run() {
       res.send(result)
     })
 
-    
 
     app.delete('/products/:id', async (req, res) => {
       const id = req.params.id;
